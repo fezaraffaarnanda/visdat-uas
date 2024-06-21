@@ -151,120 +151,118 @@ const migrationData = [
 
 // Fungsi untuk membuat chart
 function createMigrationChart(data, chartId, title) {
-// Mengurutkan data berdasarkan total migrasi (male + female)
-data.sort((a, b) => (b.male + b.female) - (a.male + a.female));
+    // Mengurutkan data berdasarkan total migrasi (male + female)
+    data.sort((a, b) => (b.male + b.female) - (a.male + a.female));
 
-const margin = { top: 20, right: 30, bottom: 100, left: 60 };
-const width = 850 - margin.left - margin.right;
-const height = 600 - margin.top - margin.bottom;
+    const margin = { top: 20, right: 30, bottom: 60, left: 150 };
+    const width = 850 - margin.left - margin.right;
+    const height = 600 - margin.top - margin.bottom;
 
-const svg = d3.select(chartId)
-    .append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-    .append("g")
-    .attr("transform", `translate(${margin.left},${margin.top})`);
+    const svg = d3.select(chartId)
+        .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
 
-const x = d3.scaleBand()
-    .domain(data.map(d => d.province))
-    .range([0, width])
-    .padding(0.1);
+    const y = d3.scaleBand()
+        .domain(data.map(d => d.province))
+        .range([0, height])
+        .padding(0.1);
 
-const y = d3.scaleLinear()
-    .domain([0, d3.max(data, d => d.male + d.female)]).nice()
-    .range([height, 0]);
+    const x = d3.scaleLinear()
+        .domain([0, d3.max(data, d => d.male + d.female)]).nice()
+        .range([0, width]);
 
-const color = d3.scaleOrdinal()
-    .domain(["male", "female"])
-    .range(["#003f5c", "#58508d"]);
+    const color = d3.scaleOrdinal()
+        .domain(["male", "female"])
+        .range(["#102C57", "#1679AB"]);
 
-const stack = d3.stack()
-    .keys(["male", "female"])
-    .order(d3.stackOrderNone)
-    .offset(d3.stackOffsetNone);
+    const stack = d3.stack()
+        .keys(["male", "female"])
+        .order(d3.stackOrderNone)
+        .offset(d3.stackOffsetNone);
 
-const stackedData = stack(data);
+    const stackedData = stack(data);
 
-svg.append("g")
-    .selectAll("g")
-    .data(stackedData)
-    .enter().append("g")
-        .attr("fill", d => color(d.key))
-    .selectAll("rect")
-    .data(d => d)
-    .enter().append("rect")
-        .attr("x", d => x(d.data.province))
-        .attr("y", d => y(d[1]))
-        .attr("height", d => y(d[0]) - y(d[1]))
-        .attr("width", x.bandwidth())
-    .on("mouseover", function(event, d) {
-        const gender = d3.select(this.parentNode).datum().key;
-        const tooltip = d3.select("#tooltip");
-        tooltip.style("opacity", 1)
-            .html(`<strong>${d.data.province}</strong><br>${gender}: ${d[1] - d[0]}`)
-            .style("left", (event.pageX + 10) + "px")
-            .style("top", (event.pageY - 15) + "px");
-        d3.select(this).attr("opacity", 0.8);
-    })
-    .on("mouseout", function() {
-        d3.select("#tooltip").style("opacity", 0);
-        d3.select(this).attr("opacity", 1);
-    });
+    svg.append("g")
+        .selectAll("g")
+        .data(stackedData)
+        .enter().append("g")
+            .attr("fill", d => color(d.key))
+        .selectAll("rect")
+        .data(d => d)
+        .enter().append("rect")
+            .attr("y", d => y(d.data.province))
+            .attr("x", d => x(d[0]))
+            .attr("height", y.bandwidth())
+            .attr("width", d => x(d[1]) - x(d[0]))
+        .on("mouseover", function(event, d) {
+            const gender = d3.select(this.parentNode).datum().key;
+            const tooltip = d3.select("#tooltip");
+            tooltip.style("opacity", 1)
+                .html(`<strong>${d.data.province}</strong><br>${gender}: ${d[1] - d[0]}`)
+                .style("left", (event.pageX + 10) + "px")
+                .style("top", (event.pageY - 15) + "px");
+            d3.select(this).attr("opacity", 0.8);
+        })
+        .on("mouseout", function() {
+            d3.select("#tooltip").style("opacity", 0);
+            d3.select(this).attr("opacity", 1);
+        });
 
-svg.append("g")
-    .attr("class", "x-axis")
-    .attr("transform", `translate(0,${height})`)
-    .call(d3.axisBottom(x))
-    .selectAll("text")
-        .attr("transform", "rotate(-45)")
-        .style("text-anchor", "end");
+    svg.append("g")
+        .attr("class", "x-axis")
+        .attr("transform", `translate(0,${height})`)
+        .call(d3.axisBottom(x));
 
-svg.append("g")
-    .attr("class", "y-axis")
-    .call(d3.axisLeft(y));
+    svg.append("g")
+        .attr("class", "y-axis")
+        .call(d3.axisLeft(y));
 
-// Legenda
-const legend = svg.append("g")
-    .attr("font-family", "sans-serif")
-    .attr("font-size", 10)
-    .attr("text-anchor", "end")
-    .selectAll("g")
-    .data(color.domain().slice().reverse())
-    .enter().append("g")
-        .attr("transform", (d, i) => `translate(0,${i * 20})`);
+    // Legenda
+    const legend = svg.append("g")
+        .attr("font-family", "sans-serif")
+        .attr("font-size", 10)
+        .attr("text-anchor", "end")
+        .attr("transform", `translate(${width - 20},${height - 55})`)
+        .selectAll("g")
+        .data(color.domain().slice().reverse())
+        .enter().append("g")
+            .attr("transform", (d, i) => `translate(0,${i * 20})`);
 
-legend.append("rect")
-    .attr("x", width - 19)
-    .attr("width", 19)
-    .attr("height", 19)
-    .attr("fill", color);
+    legend.append("rect")
+        .attr("x", 0)
+        .attr("width", 19)
+        .attr("height", 19)
+        .attr("fill", color);
 
-legend.append("text")
-    .attr("x", width - 24)
-    .attr("y", 9.5)
-    .attr("dy", "0.32em")
-    .text(d => d);
+    legend.append("text")
+        .attr("x", -5)
+        .attr("y", 9.5)
+        .attr("dy", "0.32em")
+        .text(d => d);
 
-// Judul chart
-svg.append("text")
-    .attr("x", width / 2)
-    .attr("y", -margin.top / 2)
-    .attr("text-anchor", "middle")
-    .style("font-size", "16px")
-    .text(title);
+    // Judul chart
+    svg.append("text")
+        .attr("x", width / 2)
+        .attr("y", -margin.top / 2)
+        .attr("text-anchor", "middle")
+        .style("font-size", "16px")
+        .text(title);
 }
 
 // Memisahkan data untuk migrasi masuk dan keluar
 const migrationInData = migrationData.map(d => ({
-province: d.province,
-male: d.inMale,
-female: d.inFemale
+    province: d.province,
+    male: d.inMale,
+    female: d.inFemale
 }));
 
 const migrationOutData = migrationData.map(d => ({
-province: d.province,
-male: d.outMale,
-female: d.outFemale
+    province: d.province,
+    male: d.outMale,
+    female: d.outFemale
 }));
 
 // Membuat chart untuk migrasi masuk
