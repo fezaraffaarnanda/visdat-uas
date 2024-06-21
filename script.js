@@ -1186,146 +1186,151 @@ const sunburstData = {
 };
 
 function createSunburstChart(data) {
-  const width = 700;
-  const height = 700;
-  const radius = Math.min(width, height) / 2;
-
-  const svg = d3
-    .select("#sunburst-chart")
-    .append("svg")
-    .attr("width", width)
-    .attr("height", height)
-    .append("g")
-    .attr("transform", `translate(${width / 2},${height / 2})`);
-
-  const color = d3.scaleOrdinal(d3.schemeSet2);
-
-  const partition = d3.partition().size([2 * Math.PI, radius]);
-
-  const arc = d3
-    .arc()
-    .startAngle((d) => d.x0)
-    .endAngle((d) => d.x1)
-    .innerRadius((d) => d.y0)
-    .outerRadius((d) => d.y1);
-
-  const root = d3
-    .hierarchy(data)
-    .sum((d) => d.value)
-    .sort((a, b) => b.value - a.value);
-
-  partition(root);
-
-  const path = svg
-    .selectAll("path")
-    .data(root.descendants().filter((d) => d.depth))
-    .enter()
-    .append("path")
-    .attr("d", arc)
-    .style("fill", (d) => color((d.children ? d : d.parent).data.name))
-    // Menghapus pengaturan opacity
-    .on("mouseover", mouseover)
-    .on("mouseleave", mouseleave)
-    .on("click", clicked);
-
-  const label = svg
-    .selectAll("text")
-    .data(
-      root
-        .descendants()
-        .filter((d) => d.depth && ((d.y0 + d.y1) / 2) * (d.x1 - d.x0) > 10)
-    )
-    .enter()
-    .append("text")
-    .attr("transform", function (d) {
-      const x = (((d.x0 + d.x1) / 2) * 180) / Math.PI;
-      const y = (d.y0 + d.y1) / 2;
-      return `rotate(${x - 90}) translate(${y},0) rotate(${x < 180 ? 0 : 180})`;
-    })
-    .attr("dy", "0.35em")
-    .text((d) => d.data.name)
-    .style("font-size", "10px")
-    .style("text-anchor", "middle")
-    .style("fill", "#fff");
-
-  const tooltip = d3
-    .select("body")
-    .append("div")
-    .attr("class", "tooltip")
-    .style("opacity", 0)
-    .style("position", "absolute")
-    .style("background-color", "white")
-    .style("border", "solid")
-    .style("border-width", "1px")
-    .style("border-radius", "5px")
-    .style("padding", "10px");
-
-  function mouseover(event, d) {
-    d3.select(this)
-      .transition()
-      .duration(200)
+    const width = 700;
+    const height = 700;
+    const radius = Math.min(width, height) / 2;
+  
+    const svg = d3
+      .select("#sunburst-chart")
+      .append("svg")
+      .attr("width", width)
+      .attr("height", height)
+      .append("g")
+      .attr("transform", `translate(${width / 2},${height / 2})`);
+  
+    const color = d3.scaleOrdinal(d3.schemeCategory10);
+  
+    const partition = d3.partition().size([2 * Math.PI, radius]);
+  
+    const arc = d3
+      .arc()
+      .startAngle((d) => d.x0)
+      .endAngle((d) => d.x1)
+      .innerRadius((d) => d.y0)
+      .outerRadius((d) => d.y1);
+  
+    const root = d3
+      .hierarchy(data)
+      .sum((d) => d.value)
+      .sort((a, b) => b.value - a.value);
+  
+    partition(root);
+  
+    const path = svg
+      .selectAll("path")
+      .data(root.descendants().filter((d) => d.depth))
+      .enter()
+      .append("path")
+      .attr("d", arc)
+      .style("fill", (d) => color((d.children ? d : d.parent).data.name))
       .style("stroke", "#fff")
-      .style("stroke-width", "2px");
-
-    tooltip.transition().duration(200).style("opacity", 0.9);
-    tooltip
-      .html(`<strong>${d.data.name}</strong><br/>Nilai: ${d.value}`)
-      .style("left", event.pageX + "px")
-      .style("top", event.pageY - 28 + "px");
-  }
-
-  function mouseleave(event, d) {
-    d3.select(this).transition().duration(200).style("stroke", "none");
-
-    tooltip.transition().duration(500).style("opacity", 0);
-  }
-
-  function clicked(event, p) {
-    root.each(
-      (d) =>
-        (d.target = {
-          x0:
-            Math.max(0, Math.min(1, (d.x0 - p.x0) / (p.x1 - p.x0))) *
-            2 *
-            Math.PI,
-          x1:
-            Math.max(0, Math.min(1, (d.x1 - p.x0) / (p.x1 - p.x0))) *
-            2 *
-            Math.PI,
-          y0: Math.max(0, d.y0 - p.depth),
-          y1: Math.max(0, d.y1 - p.depth),
+      .style("stroke-width", "1px")
+      .on("mouseover", mouseover)
+      .on("mouseleave", mouseleave)
+      .on("click", clicked);
+  
+    const label = svg
+      .selectAll("text")
+      .data(
+        root
+          .descendants()
+          .filter((d) => d.depth && ((d.y0 + d.y1) / 2) * (d.x1 - d.x0) > 10)
+      )
+      .enter()
+      .append("text")
+      .attr("transform", function (d) {
+        const x = (((d.x0 + d.x1) / 2) * 180) / Math.PI;
+        const y = (d.y0 + d.y1) / 2;
+        return `rotate(${x - 90}) translate(${y},0) rotate(${x < 180 ? 0 : 180})`;
+      })
+      .attr("dy", "0.35em")
+      .text((d) => d.data.name)
+      .style("font-size", "12px")
+      .style("font-weight", "bold")
+      .style("text-anchor", "middle")
+      .style("fill", "#fff");
+  
+    const tooltip = d3
+      .select("body")
+      .append("div")
+      .attr("class", "tooltip")
+      .style("opacity", 0)
+      .style("position", "absolute")
+      .style("background-color", "#333")
+      .style("color", "#fff")
+      .style("border", "solid 1px #ddd")
+      .style("border-radius", "5px")
+      .style("box-shadow", "0px 0px 10px rgba(0, 0, 0, 0.5)")
+      .style("padding", "10px")
+      .style("pointer-events", "none");
+  
+    function mouseover(event, d) {
+      d3.select(this)
+        .transition()
+        .duration(200)
+        .style("stroke", "#fff")
+        .style("stroke-width", "2px");
+  
+      tooltip.transition().duration(200).style("opacity", 0.9);
+      tooltip
+        .html(`<strong>${d.data.name}</strong><br/>Nilai: ${d.value}`)
+        .style("left", event.pageX + 10 + "px")
+        .style("top", event.pageY - 28 + "px");
+    }
+  
+    function mouseleave(event, d) {
+      d3.select(this).transition().duration(200).style("stroke", "none");
+  
+      tooltip.transition().duration(500).style("opacity", 0);
+    }
+  
+    function clicked(event, p) {
+      root.each(
+        (d) =>
+          (d.target = {
+            x0:
+              Math.max(0, Math.min(1, (d.x0 - p.x0) / (p.x1 - p.x0))) *
+              2 *
+              Math.PI,
+            x1:
+              Math.max(0, Math.min(1, (d.x1 - p.x0) / (p.x1 - p.x0))) *
+              2 *
+              Math.PI,
+            y0: Math.max(0, d.y0 - p.depth),
+            y1: Math.max(0, d.y1 - p.depth),
+          })
+      );
+  
+      const t = svg.transition().duration(750);
+  
+      path
+        .transition(t)
+        .tween("data", (d) => {
+          const i = d3.interpolate(d.current, d.target);
+          return (t) => (d.current = i(t));
         })
-    );
-
-    const t = svg.transition().duration(750);
-
-    path
-      .transition(t)
-      .tween("data", (d) => {
-        const i = d3.interpolate(d.current, d.target);
-        return (t) => (d.current = i(t));
-      })
-      .attrTween("d", (d) => () => arc(d.current));
-
-    label
-      .filter(function (d) {
-        return d.target.x0 < p.target.x1;
-      })
-      .transition(t)
-      .attrTween("transform", (d) => () => {
-        const x = (((d.target.x0 + d.target.x1) / 2) * 180) / Math.PI;
-        const y = (d.target.y0 + d.target.y1) / 2;
-        return `rotate(${x - 90}) translate(${y},0) rotate(${
-          x < 180 ? 0 : 180
-        })`;
-      })
-      .style("opacity", (d) => +labelVisible(d.target));
+        .attrTween("d", (d) => () => arc(d.current));
+  
+      label
+        .filter(function (d) {
+          return d.target.x0 < p.target.x1;
+        })
+        .transition(t)
+        .attrTween("transform", (d) => () => {
+          const x = (((d.target.x0 + d.target.x1) / 2) * 180) / Math.PI;
+          const y = (d.target.y0 + d.target.y1) / 2;
+          return `rotate(${x - 90}) translate(${y},0) rotate(${
+            x < 180 ? 0 : 180
+          })`;
+        })
+        .style("opacity", (d) => +labelVisible(d.target));
+    }
+  
+    function labelVisible(d) {
+      return d.y1 <= 3 && d.y0 >= 1 && (d.y1 - d.y0) * (d.x1 - d.x0) > 0.03;
+    }
   }
-
-  function labelVisible(d) {
-    return d.y1 <= 3 && d.y0 >= 1 && (d.y1 - d.y0) * (d.x1 - d.x0) > 0.03;
-  }
-}
-
-// Panggil fungsi untuk membuat Sunburst Chart
-createSunburstChart(sunburstData);
+  
+  // Panggil fungsi untuk membuat Sunburst Chart
+  createSunburstChart(sunburstData);
+  
