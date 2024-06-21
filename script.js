@@ -12,70 +12,91 @@ const data = [
   { country: "Lainnya", total: 20287, male: 11465, female: 8822 },
 ];
 
-// Mengurutkan data secara descending berdasarkan total migrasi
-data.sort((a, b) => b.total - a.total);
+// Function to sort data by total migration
+function sortData(data) {
+  return data.sort((a, b) => b.total - a.total);
+}
 
-const margin = { top: 20, right: 30, bottom: 78, left: 60 };
-const width = 850 - margin.left - margin.right;
+// Sorted data
+const sortedData = sortData(data);
+
+const margin = { top: 50, right: 50, bottom: 100, left: 100 };
+const width = 900 - margin.left - margin.right;
 const height = 600 - margin.top - margin.bottom;
 
 const svg = d3
-  .select("#chart")
+  .select("#migrasi-luar-negeri")
   .append("svg")
   .attr("width", width + margin.left + margin.right)
   .attr("height", height + margin.top + margin.bottom)
   .append("g")
   .attr("transform", `translate(${margin.left},${margin.top})`);
 
-// Mengurutkan data secara descending berdasarkan total migrasi
-data.sort((a, b) => b.total - a.total);
+const maxValue = Math.max(
+  Math.abs(d3.min(sortedData, (d) => -d.female)),
+  Math.abs(d3.max(sortedData, (d) => d.male))
+);
 
 const x = d3
-  .scaleBand()
-  .domain(data.map((d) => d.country))
-  .range([0, width])
-  .padding(0.1);
+  .scaleLinear()
+  .domain([-maxValue, maxValue])
+  .nice()
+  .range([0, width]);
 
 const y = d3
-  .scaleLinear()
-  .domain([0, d3.max(data, (d) => d.total)])
-  .nice()
-  .range([height, 0]);
+  .scaleBand()
+  .domain(sortedData.map((d) => d.country).reverse())
+  .range([height, 0])
+  .padding(0.1);
 
 const color = d3
   .scaleOrdinal()
   .domain(["male", "female"])
-  .range(["#003f5c", "#58508d"]);
+  .range(["#AD88C6", "#7469B6"]);
 
-const stack = d3
-  .stack()
-  .keys(["male", "female"])
-  .order(d3.stackOrderNone)
-  .offset(d3.stackOffsetNone);
-
-const stackedData = stack(data);
-
+// Append bars for male
 svg
   .append("g")
-  .selectAll("g")
-  .data(stackedData)
-  .enter()
-  .append("g")
-  .attr("fill", (d) => color(d.key))
   .selectAll("rect")
-  .data((d) => d)
+  .data(sortedData)
   .enter()
   .append("rect")
-  .attr("x", (d) => x(d.data.country))
-  .attr("y", (d) => y(d[1]))
-  .attr("height", (d) => y(d[0]) - y(d[1]))
-  .attr("width", x.bandwidth())
+  .attr("x", (d) => x(0))
+  .attr("y", (d) => y(d.country))
+  .attr("width", (d) => x(d.male) - x(0))
+  .attr("height", y.bandwidth())
+  .attr("fill", color("male"))
   .on("mouseover", function (event, d) {
-    const gender = d3.select(this.parentNode).datum().key;
     const tooltip = d3.select("#tooltip");
     tooltip
-      .style("opacity", 0.1)
-      .html(`<strong>${d.data.country}</strong><br>${gender}: ${d[1] - d[0]}`)
+      .style("opacity", 1)
+      .html(`<strong>${d.country}</strong><br>Male: ${d.male}`)
+      .style("left", event.pageX + 10 + "px")
+      .style("top", event.pageY - 15 + "px");
+    d3.select(this).attr("opacity", 0.8);
+  })
+  .on("mouseout", function () {
+    d3.select("#tooltip").style("opacity", 0);
+    d3.select(this).attr("opacity", 1);
+  });
+
+// Append bars for female
+svg
+  .append("g")
+  .selectAll("rect")
+  .data(sortedData)
+  .enter()
+  .append("rect")
+  .attr("x", (d) => x(-d.female))
+  .attr("y", (d) => y(d.country))
+  .attr("width", (d) => x(0) - x(-d.female))
+  .attr("height", y.bandwidth())
+  .attr("fill", color("female"))
+  .on("mouseover", function (event, d) {
+    const tooltip = d3.select("#tooltip");
+    tooltip
+      .style("opacity", 1)
+      .html(`<strong>${d.country}</strong><br>Female: ${d.female}`)
       .style("left", event.pageX + 10 + "px")
       .style("top", event.pageY - 15 + "px");
     d3.select(this).attr("opacity", 0.8);
@@ -89,10 +110,12 @@ svg
   .append("g")
   .attr("class", "x-axis")
   .attr("transform", `translate(0,${height})`)
-  .call(d3.axisBottom(x))
-  .selectAll("text")
-  .attr("transform", "rotate(-45)")
-  .style("text-anchor", "end");
+  .call(
+    d3
+      .axisBottom(x)
+      .ticks(10)
+      .tickFormat((d) => Math.abs(d))
+  );
 
 svg.append("g").attr("class", "y-axis").call(d3.axisLeft(y));
 
@@ -102,6 +125,7 @@ const legend = svg
   .attr("font-family", "sans-serif")
   .attr("font-size", 10)
   .attr("text-anchor", "end")
+  .attr("transform", `translate(${width},${-margin.top})`)
   .selectAll("g")
   .data(color.domain().slice().reverse())
   .enter()
@@ -110,14 +134,14 @@ const legend = svg
 
 legend
   .append("rect")
-  .attr("x", width - 19)
+  .attr("x", -19)
   .attr("width", 19)
   .attr("height", 19)
   .attr("fill", color);
 
 legend
   .append("text")
-  .attr("x", width - 24)
+  .attr("x", -24)
   .attr("y", 9.5)
   .attr("dy", "0.32em")
   .text((d) => d);
@@ -893,7 +917,10 @@ educationData.forEach((d) => {
 // Mengurutkan berdasarkan total secara descending
 educationData.sort((a, b) => b.total - a.total);
 
-// Fungsi untuk membuat chart tingkat pendidikan
+// Ambil 5 provinsi teratas
+const top5EducationData = educationData.slice(0, 5);
+
+// Fungsi untuk membuat grouped bar chart tingkat pendidikan
 function createEducationChart(data) {
   const margin = { top: 35, right: 200, bottom: 100, left: 60 };
   const width = 1000 - margin.left - margin.right;
@@ -911,15 +938,21 @@ function createEducationChart(data) {
     (key) => key !== "province" && key !== "total"
   );
 
-  const x = d3
+  const x0 = d3
     .scaleBand()
     .domain(data.map((d) => d.province))
     .range([0, width])
     .padding(0.1);
 
+  const x1 = d3
+    .scaleBand()
+    .domain(educationLevels)
+    .range([0, x0.bandwidth()])
+    .padding(0.05);
+
   const y = d3
     .scaleLinear()
-    .domain([0, d3.max(data, (d) => d.total)])
+    .domain([0, d3.max(data, (d) => d3.max(educationLevels, (key) => d[key]))])
     .nice()
     .range([height, 0]);
 
@@ -927,49 +960,39 @@ function createEducationChart(data) {
     .scaleOrdinal()
     .domain(educationLevels)
     .range([
-      "#E7F0DC",
-      "#597445",
-      "#658147",
-      "#729762",
-      "#4F6D5E",
-      "#82926D",
-      "#A1A961",
-      "#B3B178",
+      "#dab5ff",
+      "#d0aaff",
+      "#c99fff",
+      "#bd8aff",
+      "#a171ff",
+      "#8f66ff",
+      "#7b4fff",
+      "#6836ff",
     ]);
 
-  const stack = d3
-    .stack()
-    .keys(educationLevels)
-    .order(d3.stackOrderNone)
-    .offset(d3.stackOffsetNone);
-
-  const stackedData = stack(data);
-
-  svg
-    .append("g")
-    .selectAll("g")
-    .data(stackedData)
+  const provinces = svg
+    .selectAll(".province")
+    .data(data)
     .enter()
     .append("g")
-    .attr("fill", (d) => color(d.key))
+    .attr("class", "province")
+    .attr("transform", (d) => `translate(${x0(d.province)},0)`);
+
+  provinces
     .selectAll("rect")
-    .data((d) => d)
+    .data((d) => educationLevels.map((key) => ({ key, value: d[key] })))
     .enter()
     .append("rect")
-    .attr("x", (d) => x(d.data.province))
-    .attr("y", (d) => y(d[1]))
-    .attr("height", (d) => y(d[0]) - y(d[1]))
-    .attr("width", x.bandwidth())
+    .attr("x", (d) => x1(d.key))
+    .attr("y", (d) => y(d.value))
+    .attr("width", x1.bandwidth())
+    .attr("height", (d) => height - y(d.value))
+    .attr("fill", (d) => color(d.key))
     .on("mouseover", function (event, d) {
-      const educationLevel = d3.select(this.parentNode).datum().key;
       const tooltip = d3.select("#tooltip");
       tooltip
         .style("opacity", 1)
-        .html(
-          `<strong>${d.data.province}</strong><br>${educationLevel}: ${
-            d[1] - d[0]
-          }`
-        )
+        .html(`<strong>${d.key}</strong><br>${d.value}`)
         .style("left", event.pageX + 10 + "px")
         .style("top", event.pageY - 15 + "px");
       d3.select(this).attr("opacity", 0.8);
@@ -983,7 +1006,7 @@ function createEducationChart(data) {
     .append("g")
     .attr("class", "x-axis")
     .attr("transform", `translate(0,${height})`)
-    .call(d3.axisBottom(x))
+    .call(d3.axisBottom(x0))
     .selectAll("text")
     .attr("transform", "rotate(-45)")
     .style("text-anchor", "end");
@@ -1027,7 +1050,7 @@ function createEducationChart(data) {
 }
 
 // Panggil fungsi untuk membuat chart dengan data yang telah diurutkan
-createEducationChart(educationData);
+createEducationChart(top5EducationData);
 
 // Data untuk Sunburst Chart
 const sunburstData = {
