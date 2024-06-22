@@ -32,14 +32,13 @@ const svg = d3
   .append("g")
   .attr("transform", `translate(${margin.left},${margin.top})`);
 
-const maxValue = Math.max(
-  Math.abs(d3.min(sortedData, (d) => -d.female)),
-  Math.abs(d3.max(sortedData, (d) => d.male))
-);
+
+const maxMaleValue = d3.max(sortedData, d => d.male);
+const maxFemaleValue = d3.max(sortedData, d => d.female);
 
 const x = d3
   .scaleLinear()
-  .domain([-maxValue, maxValue])
+  .domain([-maxFemaleValue, maxMaleValue])
   .nice()
   .range([0, width]);
 
@@ -1198,7 +1197,7 @@ function createSunburstChart(data) {
     .append("g")
     .attr("transform", `translate(${width / 2},${height / 2})`);
 
-  const color = d3.scaleOrdinal(d3.schemeSet2);
+  const color = d3.scaleOrdinal(d3.schemeCategory10);
 
   const partition = d3.partition().size([2 * Math.PI, radius]);
 
@@ -1223,7 +1222,8 @@ function createSunburstChart(data) {
     .append("path")
     .attr("d", arc)
     .style("fill", (d) => color((d.children ? d : d.parent).data.name))
-    // Menghapus pengaturan opacity
+    .style("stroke", "#fff")
+    .style("stroke-width", "1px")
     .on("mouseover", mouseover)
     .on("mouseleave", mouseleave)
     .on("click", clicked);
@@ -1244,7 +1244,8 @@ function createSunburstChart(data) {
     })
     .attr("dy", "0.35em")
     .text((d) => d.data.name)
-    .style("font-size", "10px")
+    .style("font-size", "12px")
+    .style("font-weight", "bold")
     .style("text-anchor", "middle")
     .style("fill", "#fff");
 
@@ -1254,11 +1255,13 @@ function createSunburstChart(data) {
     .attr("class", "tooltip")
     .style("opacity", 0)
     .style("position", "absolute")
-    .style("background-color", "white")
-    .style("border", "solid")
-    .style("border-width", "1px")
+    .style("background-color", "#333")
+    .style("color", "#fff")
+    .style("border", "solid 1px #ddd")
     .style("border-radius", "5px")
-    .style("padding", "10px");
+    .style("box-shadow", "0px 0px 10px rgba(0, 0, 0, 0.5)")
+    .style("padding", "10px")
+    .style("pointer-events", "none");
 
   function mouseover(event, d) {
     d3.select(this)
@@ -1270,7 +1273,7 @@ function createSunburstChart(data) {
     tooltip.transition().duration(200).style("opacity", 0.9);
     tooltip
       .html(`<strong>${d.data.name}</strong><br/>Nilai: ${d.value}`)
-      .style("left", event.pageX + "px")
+      .style("left", event.pageX + 10 + "px")
       .style("top", event.pageY - 28 + "px");
   }
 
@@ -1329,3 +1332,236 @@ function createSunburstChart(data) {
 
 // Panggil fungsi untuk membuat Sunburst Chart
 createSunburstChart(sunburstData);
+
+const dataTreeMap = {
+  "Milik sendiri": {
+    name: "Status Penguasaan",
+    children: [
+      { name: "Aceh", value: 18455 },
+      { name: "Sumatera Utara", value: 96573 },
+      { name: "Sumatera Barat", value: 95332 },
+      { name: "Riau", value: 60516 },
+      { name: "Jambi", value: 30426 },
+      { name: "Sumatera Selatan", value: 56454 },
+      { name: "Bengkulu", value: 22507 },
+      { name: "Lampung", value: 101091 },
+      { name: "Kep. Bangka Belitung", value: 16594 },
+      { name: "Kepulauan Riau", value: 35141 },
+      { name: "DKI Jakarta", value: 64918 },
+      { name: "Jawa Barat", value: 474481 },
+      { name: "Jawa Tengah", value: 636890 },
+      { name: "DI Yogyakarta", value: 84033 },
+      { name: "Jawa Timur", value: 286968 },
+      { name: "Banten", value: 161763 },
+      { name: "Bali", value: 16468 },
+      { name: "Nusa Tenggara Barat", value: 141228 },
+      { name: "Nusa Tenggara Timur", value: 92581 },
+      { name: "Kalimantan Barat", value: 39537 },
+      { name: "Kalimantan Tengah", value: 20496 },
+      { name: "Kalimantan Selatan", value: 28932 },
+      { name: "Kalimantan Timur", value: 37254 },
+      { name: "Kalimantan Utara", value: 12092 },
+      { name: "Sulawesi Utara", value: 18103 },
+      { name: "Sulawesi Tengah", value: 26983 },
+      { name: "Sulawesi Selatan", value: 114245 },
+      { name: "Sulawesi Tenggara", value: 54658 },
+      { name: "Gorontalo", value: 11075 },
+      { name: "Sulawesi Barat", value: 25112 },
+      { name: "Maluku", value: 16375 },
+      { name: "Maluku Utara", value: 8740 },
+      { name: "Papua Barat", value: 15716 },
+      { name: "Papua", value: 12137 },
+    ],
+  },
+  "Kontrak/Sewa": {
+    name: "Status Penguasaan",
+    children: [
+      { name: "Aceh", value: 11135 },
+      { name: "Sumatera Utara", value: 38417 },
+      { name: "Sumatera Barat", value: 27559 },
+      { name: "Riau", value: 39750 },
+      { name: "Jambi", value: 12310 },
+      { name: "Sumatera Selatan", value: 10831 },
+      { name: "Bengkulu", value: 6120 },
+      { name: "Lampung", value: 9940 },
+      { name: "Kep. Bangka Belitung", value: 7389 },
+      { name: "Kepulauan Riau", value: 51975 },
+      { name: "DKI Jakarta", value: 109245 },
+      { name: "Jawa Barat", value: 169241 },
+      { name: "Jawa Tengah", value: 45805 },
+      { name: "DI Yogyakarta", value: 71790 },
+      { name: "Jawa Timur", value: 38233 },
+      { name: "Banten", value: 62033 },
+      { name: "Bali", value: 29523 },
+      { name: "Nusa Tenggara Barat", value: 6368 },
+      { name: "Nusa Tenggara Timur", value: 7020 },
+      { name: "Kalimantan Barat", value: 5242 },
+      { name: "Kalimantan Tengah", value: 9195 },
+      { name: "Kalimantan Selatan", value: 14605 },
+      { name: "Kalimantan Timur", value: 36900 },
+      { name: "Kalimantan Utara", value: 8171 },
+      { name: "Sulawesi Utara", value: 5384 },
+      { name: "Sulawesi Tengah", value: 10526 },
+      { name: "Sulawesi Selatan", value: 16923 },
+      { name: "Sulawesi Tenggara", value: 8240 },
+      { name: "Gorontalo", value: 2955 },
+      { name: "Sulawesi Barat", value: 2625 },
+      { name: "Maluku", value: 5347 },
+      { name: "Maluku Utara", value: 3491 },
+      { name: "Papua Barat", value: 11145 },
+      { name: "Papua", value: 18739 },
+    ],
+  },
+  "Bebas Sewa": {
+    name: "Status Penguasaan",
+    children: [
+      { name: "Aceh", value: 8420 },
+      { name: "Sumatera Utara", value: 44414 },
+      { name: "Sumatera Barat", value: 54057 },
+      { name: "Riau", value: 27583 },
+      { name: "Jambi", value: 9509 },
+      { name: "Sumatera Selatan", value: 18871 },
+      { name: "Bengkulu", value: 6035 },
+      { name: "Lampung", value: 16393 },
+      { name: "Kep. Bangka Belitung", value: 5775 },
+      { name: "Kepulauan Riau", value: 5733 },
+      { name: "DKI Jakarta", value: 31831 },
+      { name: "Jawa Barat", value: 59882 },
+      { name: "Jawa Tengah", value: 88615 },
+      { name: "DI Yogyakarta", value: 21074 },
+      { name: "Jawa Timur", value: 34727 },
+      { name: "Banten", value: 14858 },
+      { name: "Bali", value: 3128 },
+      { name: "Nusa Tenggara Barat", value: 14588 },
+      { name: "Nusa Tenggara Timur", value: 9214 },
+      { name: "Kalimantan Barat", value: 11657 },
+      { name: "Kalimantan Tengah", value: 25553 },
+      { name: "Kalimantan Selatan", value: 13304 },
+      { name: "Kalimantan Timur", value: 24848 },
+      { name: "Kalimantan Utara", value: 5154 },
+      { name: "Sulawesi Utara", value: 7255 },
+      { name: "Sulawesi Tengah", value: 7323 },
+      { name: "Sulawesi Selatan", value: 22881 },
+      { name: "Sulawesi Tenggara", value: 11432 },
+      { name: "Gorontalo", value: 6309 },
+      { name: "Sulawesi Barat", value: 6099 },
+      { name: "Maluku", value: 4761 },
+      { name: "Maluku Utara", value: 2643 },
+      { name: "Papua Barat", value: 6915 },
+      { name: "Papua", value: 944 },
+    ],
+  },
+  "Dinas dan Lainnya": {
+    name: "Status Penguasaan",
+    children: [
+      { name: "Aceh", value: 628 },
+      { name: "Sumatera Utara", value: 2749 },
+      { name: "Sumatera Barat", value: 1902 },
+      { name: "Riau", value: 3980 },
+      { name: "Jambi", value: 678 },
+      { name: "Sumatera Selatan", value: 741 },
+      { name: "Bengkulu", value: 181 },
+      { name: "Lampung", value: 218 },
+      { name: "Kep. Bangka Belitung", value: 611 },
+      { name: "Kepulauan Riau", value: 1349 },
+      { name: "DKI Jakarta", value: 6462 },
+      { name: "Jawa Barat", value: 12865 },
+      { name: "Jawa Tengah", value: 7214 },
+      { name: "DI Yogyakarta", value: 1987 },
+      { name: "Jawa Timur", value: 4426 },
+      { name: "Banten", value: 2334 },
+      { name: "Bali", value: 52 },
+      { name: "Nusa Tenggara Barat", value: 464 },
+      { name: "Nusa Tenggara Timur", value: 562 },
+      { name: "Kalimantan Barat", value: 2206 },
+      { name: "Kalimantan Tengah", value: 15796 },
+      { name: "Kalimantan Selatan", value: 2840 },
+      { name: "Kalimantan Timur", value: 4777 },
+      { name: "Kalimantan Utara", value: 728 },
+      { name: "Sulawesi Utara", value: 588 },
+      { name: "Sulawesi Tengah", value: 845 },
+      { name: "Sulawesi Selatan", value: 1253 },
+      { name: "Sulawesi Tenggara", value: 409 },
+      { name: "Gorontalo", value: 16 },
+      { name: "Sulawesi Barat", value: 627 },
+      { name: "Maluku", value: 527 },
+      { name: "Maluku Utara", value: 262 },
+      { name: "Papua Barat", value: 1538 },
+      { name: "Papua", value: 1318 },
+    ],
+  },
+};
+
+document.addEventListener('DOMContentLoaded', function () {
+    const dropdown = d3.select('#dropdown');
+    const treemapContainer = d3.select('#treemap');
+    const tooltip = d3.select('#tooltip');
+  
+    const statuses = Object.keys(dataTreeMap);
+    dropdown.selectAll('option')
+      .data(statuses)
+      .enter()
+      .append('option')
+      .text(d => d)
+      .attr('value', d => d);
+  
+    function createTreemap(data) {
+      const width = 850;
+      const height = 600;
+  
+      const color = d3.scaleOrdinal(d3.schemeCategory10);
+  
+      const root = d3.hierarchy(data)
+        .sum(d => d.value)
+        .sort((a, b) => b.value - a.value);
+  
+      const treemapLayout = d3.treemap()
+        .size([width, height])
+        .padding(1);
+  
+      treemapLayout(root);
+  
+      treemapContainer.selectAll('*').remove();
+  
+      const svg = treemapContainer.append('svg')
+        .attr('width', width)
+        .attr('height', height);
+  
+      const nodes = svg.selectAll('g')
+        .data(root.leaves())
+        .enter()
+        .append('g')
+        .attr('transform', d => `translate(${d.x0},${d.y0})`);
+  
+      nodes.append('rect')
+        .attr('width', d => d.x1 - d.x0)
+        .attr('height', d => d.y1 - d.y0)
+        .attr('fill', d => color(d.data.name))
+        .on('mouseover', function (event, d) {
+          tooltip.style('opacity', 1)
+            .html(`<strong>${d.data.name}</strong><br>Jumlah: ${d.data.value}`)
+            .style('left', `${event.pageX + 10}px`)
+            .style('top', `${event.pageY - 15}px`);
+          d3.select(this).attr('opacity', 0.8);
+        })
+        .on('mouseout', function () {
+          tooltip.style('opacity', 0);
+          d3.select(this).attr('opacity', 1);
+        });
+  
+      nodes.append('text')
+        .attr('x', 5)
+        .attr('y', 20)
+        .text(d => d.data.name)
+        .attr('fill', '#fff')
+        .attr('font-size', '12px')
+        .attr('pointer-events', 'none');
+    }
+  
+    dropdown.on('change', function () {
+      const selectedStatus = dropdown.node().value;
+      createTreemap(dataTreeMap[selectedStatus]);
+    });
+  
+    createTreemap(dataTreeMap[statuses[0]]);
+  });
