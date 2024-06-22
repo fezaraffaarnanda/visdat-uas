@@ -1,201 +1,308 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Statisik Migrasi Indonesia</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cardo&display=swap">
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Cardo&display=swap"
+    />
     <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            font-family: 'Cardo', serif;
-            background-color: #fbf9f9;
-        }
-        .header {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 60px; /* Tetapkan tinggi header */
-            display: flex;
-            align-items: center; /* Align vertically */
-            justify-content: center; /* Align horizontally */
-        }
-        .header-text {
-            font-size: 1.2em;
-        }
-        .hero {
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 0 20px;
-        }
-        h1 {
-            font-size: 3em;
-            margin-bottom: 10px;
-        }
-        .subtitle {
-            font-size: 1.2em;
-            margin-bottom: 20px;
-        }
-        .author {
-            position: absolute;
-            bottom: 20px;
-            text-align: center;
-        }
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        font-family: "Cardo", serif;
+        background-color: #fbf9f9;
+      }
+      .header {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 60px; /* Tetapkan tinggi header */
+        display: flex;
+        align-items: center; /* Align vertically */
+        justify-content: center; /* Align horizontally */
+      }
+      .header-text {
+        font-size: 1.2em;
+      }
+      .hero {
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 0 20px;
+      }
+      h1 {
+        font-size: 3em;
+        margin-bottom: 10px;
+      }
+      .subtitle {
+        font-size: 1.2em;
+        margin-bottom: 20px;
+      }
+      .author {
+        position: absolute;
+        bottom: 20px;
+        text-align: center;
+      }
 
-        .section {
-            padding: 5px 3px;
-            max-width: 850px;
-            margin: 0 auto;
-        }
-        .iframe-container {
-            position: relative;
-            width: 100%;
-            padding-bottom: 30%; /* Sesuaikan nilai ini untuk mengubah tinggi iframe */
-            height: 100;
-        }
-        .iframe-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 90%;
-            border: 0;
-        }
-        .tooltip {
-            position: absolute;
-            opacity: 0;
-            background-color: white;
-            border: 1px solid #ccc;
-            padding: 10px;
-            pointer-events: none;
-            font-size: 14px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
+      .section {
+        padding: 5px 3px;
+        max-width: 850px;
+        margin: 0 auto;
+      }
+      .iframe-container {
+        position: relative;
+        width: 100%;
+        padding-bottom: 30%; /* Sesuaikan nilai ini untuk mengubah tinggi iframe */
+        height: 100;
+      }
+      .iframe-container iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 90%;
+        border: 0;
+      }
+
+      .tooltip {
+        position: absolute;
+        pointer-events: none;
+        background-color: rgba(255, 255, 255, 0.8);
+        padding: 5px;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+        font-size: 12px;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+
+      #container {
+        text-align: center;
+      }
+      #dropdown {
+        margin-bottom: 20px;
+      }
+      #tooltip {
+        position: absolute;
+        background: #fff;
+        border: 1px solid #ccc;
+        padding: 10px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+        pointer-events: none;
+        opacity: 0;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="header">
-        <span class="header-text">Politeknik Statistika STIS</span>
+      <span class="header-text">Politeknik Statistika STIS</span>
     </div>
     <div class="hero">
-        <h1>Statisik Migrasi Indonesia</h1>
-        <p class="subtitle">Mengungkap Cerita di Balik Pergerakan Penduduk Indonesia</p>
-        <div class="author">
-            <p>Feza Raffa Arnanda<br>222112058<br>3SD2</p>
-        </div>
+      <h1>Statisik Migrasi Indonesia</h1>
+      <p class="subtitle">
+        Mengungkap Cerita di Balik Pergerakan Penduduk Indonesia
+      </p>
+      <div class="author">
+        <p>Feza Raffa Arnanda<br />222112058<br />3SD2</p>
+      </div>
     </div>
     <div class="section">
-        <h1>Flowmap Migrasi Penduduk Indonesia</h1>
-        <p>Migrasi adalah perpindahan penduduk dengan
-            tujuan menetap dari suatu tempat ke tempat Iain melewati batas
-            administratif provinsi atau kabupaten/kota (migrasi internal).</p>
-        <p>Sumber data : Long Form Sensus Penduduk 2020</p>
+      <h1>Flowmap Migrasi Penduduk Indonesia</h1>
+      <p>
+        Migrasi adalah perpindahan penduduk dengan tujuan menetap dari suatu
+        tempat ke tempat Iain melewati batas administratif provinsi atau
+        kabupaten/kota (migrasi internal).
+      </p>
+      <p>Sumber data : Long Form Sensus Penduduk 2020</p>
     </div>
 
     <div class="section">
-        <h2>Migrasi Penduduk (Laki-Laki)</h2>
-        <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Accusantium earum repudiandae perspiciatis eaque maxime repellat odit quisquam, iste ipsam doloribus numquam odio nihil labore, cumque vero? Optio eum delectus corrupti.</p>
+      <h2>Migrasi Penduduk (Laki-Laki)</h2>
+      <p>
+        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Accusantium
+        earum repudiandae perspiciatis eaque maxime repellat odit quisquam, iste
+        ipsam doloribus numquam odio nihil labore, cumque vero? Optio eum
+        delectus corrupti.
+      </p>
     </div>
 
     <div class="section iframe-container">
-        <iframe src="https://www.flowmap.blue/15z0pZOgIo7fp6pf0ji51sRIvs71wZ7S3FyUX3C-D2LI/embed" allowfullscreen></iframe>
+      <iframe
+        src="https://www.flowmap.blue/15z0pZOgIo7fp6pf0ji51sRIvs71wZ7S3FyUX3C-D2LI/embed"
+        allowfullscreen
+      ></iframe>
     </div>
 
-
     <div class="section">
-        <h2>Migrasi Penduduk (Perempuan)</h2>
-        <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Accusantium earum repudiandae perspiciatis eaque maxime repellat odit quisquam, iste ipsam doloribus numquam odio nihil labore, cumque vero? Optio eum delectus corrupti.</p>
+      <h2>Migrasi Penduduk (Perempuan)</h2>
+      <p>
+        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Accusantium
+        earum repudiandae perspiciatis eaque maxime repellat odit quisquam, iste
+        ipsam doloribus numquam odio nihil labore, cumque vero? Optio eum
+        delectus corrupti.
+      </p>
     </div>
 
     <div class="section iframe-container">
-        <iframe src="https://www.flowmap.blue/1AUdIkUh1-hUCgykVeAsj6-EXm2UuPjKESYtz0wJyZms/embed" allowfullscreen></iframe>
+      <iframe
+        src="https://www.flowmap.blue/1AUdIkUh1-hUCgykVeAsj6-EXm2UuPjKESYtz0wJyZms/embed"
+        allowfullscreen
+      ></iframe>
     </div>
 
     <div class="section">
-        <h2>Migrasi Penduduk (Total)</h2>
-        <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Accusantium earum repudiandae perspiciatis eaque maxime repellat odit quisquam, iste ipsam doloribus numquam odio nihil labore, cumque vero? Optio eum delectus corrupti.</p>
+      <h2>Migrasi Penduduk (Total)</h2>
+      <p>
+        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Accusantium
+        earum repudiandae perspiciatis eaque maxime repellat odit quisquam, iste
+        ipsam doloribus numquam odio nihil labore, cumque vero? Optio eum
+        delectus corrupti.
+      </p>
     </div>
 
     <div class="section iframe-container">
-        <iframe src="https://www.flowmap.blue/1RJhc5VZuL5wD28azHNeT8T_uKGMxXeZK_xMauXbZ_bo/embed" allowfullscreen></iframe>
+      <iframe
+        src="https://www.flowmap.blue/1RJhc5VZuL5wD28azHNeT8T_uKGMxXeZK_xMauXbZ_bo/embed"
+        allowfullscreen
+      ></iframe>
     </div>
 
     <div class="section">
-        <h2>Interpretasi</h2>
-        <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Accusantium earum repudiandae perspiciatis eaque maxime repellat odit quisquam, iste ipsam doloribus numquam odio nihil labore, cumque vero? Optio eum delectus corrupti.</p>
+      <h2>Interpretasi</h2>
+      <p>
+        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Accusantium
+        earum repudiandae perspiciatis eaque maxime repellat odit quisquam, iste
+        ipsam doloribus numquam odio nihil labore, cumque vero? Optio eum
+        delectus corrupti.
+      </p>
     </div>
 
     <div class="section">
-        <h2>Sepuluh Besar Negara Tempat Tinggal 5 Tahun yang Lalu Migran Risen</h2>
-        <p>Penduduk diklasifikasikan sebagai migran risen jika provinsi atau tempat tinggal lima tahun yang
-            lalu berbeda dari provinsi atau tempat tinggal sekarang</p>
-        <div id="migrasi-luar-negeri"></div>
+      <h2>
+        Sepuluh Besar Negara Tempat Tinggal 5 Tahun yang Lalu Migran Risen
+      </h2>
+      <p>
+        Penduduk diklasifikasikan sebagai migran risen jika provinsi atau tempat
+        tinggal lima tahun yang lalu berbeda dari provinsi atau tempat tinggal
+        sekarang
+      </p>
+      <div id="migrasi-luar-negeri"></div>
     </div>
 
     <div class="tooltip" id="tooltip"></div>
 
     <div class="section">
-        <h2>Interpretasi</h2>
-        <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Accusantium earum repudiandae perspiciatis eaque maxime repellat odit quisquam, iste ipsam doloribus numquam odio nihil labore, cumque vero? Optio eum delectus corrupti.</p>
+      <h2>Interpretasi</h2>
+      <p>
+        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Accusantium
+        earum repudiandae perspiciatis eaque maxime repellat odit quisquam, iste
+        ipsam doloribus numquam odio nihil labore, cumque vero? Optio eum
+        delectus corrupti.
+      </p>
     </div>
 
     <div class="section">
-        <h1>Migrasi Masuk dan Keluar Berdasarkan Provinsi dan Jenis Kelamin</h1>
-        <div id="migration-chart"></div>
+      <h1>Migrasi Masuk dan Keluar Berdasarkan Provinsi dan Jenis Kelamin</h1>
+      <div id="migration-chart"></div>
     </div>
 
     <div class="section">
-        <h2>Migrasi Masuk Berdasarkan Provinsi dan Jenis Kelamin</h2>
-        <div id="migration-in-chart"></div>
+      <h2>Migrasi Masuk Berdasarkan Provinsi dan Jenis Kelamin</h2>
+      <div id="migration-in-chart"></div>
     </div>
 
+    <div class="section">
+      <h2>Interpretasi</h2>
+      <p>
+        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Accusantium
+        earum repudiandae perspiciatis eaque maxime repellat odit quisquam, iste
+        ipsam doloribus numquam odio nihil labore, cumque vero? Optio eum
+        delectus corrupti.
+      </p>
+    </div>
+
+    <div class="section">
+      <h2>Migrasi Keluar Berdasarkan Provinsi dan Jenis Kelamin</h2>
+      <div id="migration-out-chart"></div>
+    </div>
+
+    <div class="section">
+      <h2>Interpretasi</h2>
+      <p>
+        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Accusantium
+        earum repudiandae perspiciatis eaque maxime repellat odit quisquam, iste
+        ipsam doloribus numquam odio nihil labore, cumque vero? Optio eum
+        delectus corrupti.
+      </p>
+    </div>
+
+    <div class="section">
+      <h2>Top 5 Provinsi Migrasi Risen Berdasarkan Tingkat Pendidikan</h2>
+      <div id="education-chart"></div>
+    </div>
+
+    <div class="section">
+      <h2>Interpretasi</h2>
+      <p>
+        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Accusantium
+        earum repudiandae perspiciatis eaque maxime repellat odit quisquam, iste
+        ipsam doloribus numquam odio nihil labore, cumque vero? Optio eum
+        delectus corrupti.
+      </p>
+    </div>
+
+    <div class="section">
+      <h2>
+        Migran Risen Berumur 10 Tahun ke Atas menurut Kelompok Umur dan Status
+        Perkawinan (Total)
+      </h2>
+      <div id="sunburst-chart"></div>
+      <div
+        id="tooltip"
+        style="
+          position: absolute;
+          opacity: 0;
+          background: lightgray;
+          padding: 5px;
+          border-radius: 5px;
+          pointer-events: none;
+        "
+      ></div>
+    </div>
+
+    <div class="section">
+      <h2>Interpretasi</h2>
+      <p>
+        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Accusantium
+        earum repudiandae perspiciatis eaque maxime repellat odit quisquam, iste
+        ipsam doloribus numquam odio nihil labore, cumque vero? Optio eum
+        delectus corrupti.
+      </p>
+    </div>
+
+
+    <div class="section">
+        <h2>Migran Risen Berumur 5 Tahun ke Atas menurut Provinsi dan Status Kepemilikan/Penguasaan Bangunan Tempat Tinggal</h2>
+
+        <div id="container">
+            <select id="dropdown"></select>
+            <div id="treemap"></div>
+            <div id="tooltip"></div>
+          </div>
+
+      </div>
     
-    <div class="section">
-        <h2>Interpretasi</h2>
-        <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Accusantium earum repudiandae perspiciatis eaque maxime repellat odit quisquam, iste ipsam doloribus numquam odio nihil labore, cumque vero? Optio eum delectus corrupti.</p>
-    </div>
-    
-    <div class="section">
-        <h2>Migrasi Keluar Berdasarkan Provinsi dan Jenis Kelamin</h2>
-        <div id="migration-out-chart"></div>
-    </div>
-
-    
-    <div class="section">
-        <h2>Interpretasi</h2>
-        <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Accusantium earum repudiandae perspiciatis eaque maxime repellat odit quisquam, iste ipsam doloribus numquam odio nihil labore, cumque vero? Optio eum delectus corrupti.</p>
-    </div>
-
-    <div class="section">
-        <h2>Top 5 Provinsi Migrasi Risen Berdasarkan Tingkat Pendidikan</h2>
-        <div id="education-chart"></div>
-    </div>
-
-    <div class="section">
-        <h2>Interpretasi</h2>
-        <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Accusantium earum repudiandae perspiciatis eaque maxime repellat odit quisquam, iste ipsam doloribus numquam odio nihil labore, cumque vero? Optio eum delectus corrupti.</p>
-    </div>
-
-    <div class="section">
-        <h2>Migran Risen Berumur 10 Tahun ke Atas menurut Kelompok Umur dan Status Perkawinan</h2>
-        <div id="sunburst-chart"></div>
-        <div id="tooltip" style="position: absolute; opacity: 0; background: lightgray; padding: 5px; border-radius: 5px; pointer-events: none;"></div>
-    </div>
-
-    <div class="section">
-        <h2>Interpretasi</h2>
-        <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Accusantium earum repudiandae perspiciatis eaque maxime repellat odit quisquam, iste ipsam doloribus numquam odio nihil labore, cumque vero? Optio eum delectus corrupti.</p>
-    </div>
 
     <script src="https://d3js.org/d3.v7.min.js"></script>
-    <script src="script.js">
-    </script>
-</body>
+    <script src="script.js"></script>
+  </body>
 </html>
