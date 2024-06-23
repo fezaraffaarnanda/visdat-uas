@@ -1,6 +1,8 @@
 
 # Visualisasi Statistik Migrasi (Hasil LFSP 2020)
 
+Tautan halaman visualisasi : https://fezaraffaarnanda.github.io/visdat-uas/
+
 Repository ini merupakan ujian akhir semester mata kuliah visualisasi data dan informasi. 
 
 Nama    : Feza Raffa Arnanda
